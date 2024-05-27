@@ -44,15 +44,16 @@ void rawFileProcessing () {
 /*************************************************************************************
 * I/O and double checks;
 * ************************************************************************************/
-  ifstream myfile("../External/tracklet_data_PbPb_2.76_v5_20000.txt");
-  ofstream Eta_w_Info("Eta_w_Info.txt");
-  ofstream Phi_w_Info("Phi_w_Info.txt");
-  ofstream allInfo("All_Layer_Information.txt");
-  ofstream layerCounts("LineLabel.txt");
-  ofstream vzeroValue("Vzero.txt");
-  ofstream vzero_w_line("vzero_w_line.txt");
-  if (!myfile.is_open()){
-    cout << "Unable to open myfile" << endl;
+  ifstream myfile        ("../External/tracklet_data_PbPb_2.76_v5_20000.txt");
+  // ifstream test("test.txt");
+  ofstream Eta_w_Info    ("Eta_w_Info.txt");
+  ofstream Phi_w_Info    ("Phi_w_Info.txt");
+  ofstream allInfo       ("allEventsInformation.txt");
+  ofstream lineNumbering ("lineNumbering.txt");
+  ofstream vzeroValue    ("vzeroValue.txt");
+  ofstream vzero_w_Line  ("vzero_w_Line.txt");
+  if (!myfile.is_open()) {
+    std::cout << "Unable to open myfile" << endl;
 	  system("read -n 1 -s -p \"Press any key to continue...\" echo");
 	  exit(1);
  	}
@@ -61,44 +62,64 @@ void rawFileProcessing () {
 
 	string temp;                // stores one line of data;
 	string left, right;         // respectively stores left and right column;
-  int counter = 1;            // indicates now is the ??th line of the original file;
+  int lineCounter = 1, eventCounter = 0;            // indicates now is the ??th line of the original file;
   double leftValue, rightValue;             // indicates the left column value, the right column value;
   double NumOfLayer = 0;
   double LabelOfLines;
+  double Left, Right;
+
   while(getline(myfile, temp)) {
-    left = temp.substr(0, temp.find(' '));     // datum of Eta_w_Hits (before the space)
-    right = temp.substr(temp.find(' ') + 1);     // datum of Phi_w_Hits (after the space)
-    
-    /****************************************************
-     * Writes 'Eta_w_Hits.txt' and 'Phi_w_Hits.txt' files;
-     * *************************************************/
-    Eta_w_Hits << left << endl;
-    Phi_w_Hits << right << endl;
-    
-    /***************************************************************************************
-     * Writes 'All_Layer_Information.txt'; Format:
-     * 'Now is the ?th line'+'the ??th layer'+'hitNumber'+'VZEROValue'+'layer_0 or layer_1';
-     * ************************************************************************************/
-    leftValue = stod(left);
-    rightValue = stod(right);
-    if (leftValue >=0 && IsInt(leftValue)) {          // the number of hits must be nonnegative integer;
-      NumOfLayer++;
-      LabelOfLines = OddEven(NumOfLayer);
-      info << counter << ' ' << NumOfLayer << ' ' << left << ' ' << right << ' ' << "Layer_" << LabelOfLines << endl;
-      if (IsInt(rightValue) && rightValue >= 0) {     // by human checking, the VZERO value should be non negative integer;
-        LayerCounts << counter << endl;               // Writes 'LineLabel.txt';
-        vzero << right << endl;
-        vzero_w_line << counter << ' ' << right << endl;
-      }
+    istringstream iss(temp);  iss >> Left >> Right;
+    if (IsInt(Left) && IsInt(Right) && Right >= 0) {
+      allInfo << lineCounter << "," << eventCounter/2 << "," << Left << "," << Right << std::endl;
+      eventCounter++;
     }
-    counter++;
+    lineCounter++;
   }
-  LayerCounts << 32991655;
+
+  // getline(test, temp);
+  
+  // istringstream iss(temp);
+  // iss >> Left >> Right;
+  // std::cout << IsInt(Left) << ", " << IsInt(Right) << std::endl;
+
+  // while(getline(myfile, temp)) {
+  //   left  = temp.substr(0, temp.find(' '));     // datum of Eta_w_Hits (before the space)
+  //   right = temp.substr(temp.find(' ') + 1);     // datum of Phi_w_Hits (after the space)
+    
+  //   /****************************************************
+  //    * Writes 'Eta_w_Hits.txt' and 'Phi_w_Hits.txt' files;
+  //    * *************************************************/
+  //   Eta_w_Hits << left << endl;
+  //   Phi_w_Hits << right << endl;
+    
+  //   /***************************************************************************************
+  //    * Writes 'allEventsInformation.txt'; Format:
+  //    * 'Now is the ?th line'+'the ??th layer'+'hitNumber'+'VZEROValue'+'layer_0 or layer_1';
+  //    * ************************************************************************************/
+  //   leftValue = stod(left);
+  //   rightValue = stod(right);
+  //   if (leftValue >= 0 && IsInt(leftValue)) {          // the number of hits must be nonnegative integer;
+  //     NumOfLayer++;
+  //     LabelOfLines = OddEven(NumOfLayer);
+  //     info << counter << ' ' << NumOfLayer << ' ' << left << ' ' << right << ' ' << "Layer_" << LabelOfLines << endl;
+  //     if (IsInt(rightValue) && rightValue >= 0) {     // by human checking, the VZERO value should be non negative integer;
+  //       LayerCounts << counter << endl;               // Writes 'LineLabel.txt';
+  //       vzero << right << endl;
+  //       vzero_w_line << counter << ' ' << right << endl;
+  //     }
+  //   }
+  //   counter++;
+  // }
+  // LayerCounts << 32991655;
 /***************************** Reminders *****************************/
-  system("say -v 'Victoria' 'Your code is done'");
-  for (int i = 1; i <= 1; i++) {
-    system("tput bel");
-    sleep(1);
-  }
-  cout << "Well done." << endl;
+  // Use: 
+  // say -v '?' 
+  // to list all available voices;
+  // system("say -v 'Grandpa (English (UK))' 'Yosur code is done'");
+  // for (int i = 1; i <= 1; i++) {
+  //   system("tput bel");
+  //   sleep(1);
+  // }
+  std::cout << "Well done." << std::endl;
 }

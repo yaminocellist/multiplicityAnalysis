@@ -12,7 +12,7 @@ using namespace std;
  * In practice, if it's layer_0, it returns '0'; else, it returns '1';
  * ******************************************************************/
 
-int OddEven(double f){
+int IsEven(double f){
     int n = static_cast<int>(f);
     if (n%2 == 0)
         return 1;
@@ -66,12 +66,23 @@ void rawFileProcessing () {
   double leftValue, rightValue;             // indicates the left column value, the right column value;
   double NumOfLayer = 0;
   double LabelOfLines;
-  double Left, Right;
+  double Left, Right, vzero0 = 0, vzero1 = 0;
 
   while(getline(myfile, temp)) {
     istringstream iss(temp);  iss >> Left >> Right;
+    
     if (IsInt(Left) && IsInt(Right) && Right >= 0) {
       allInfo << lineCounter << "," << eventCounter/2 << "," << Left << "," << Right << std::endl;
+      if (IsEven(eventCounter)) {
+        vzero0 = Right;
+      } else {
+        vzero1 = Right;
+        if (vzero0 != vzero1 ) {
+          std::cout << lineCounter << "," << eventCounter << "," << vzero0 << "," << vzero1 << std::endl;
+          exit(1);
+        }
+      }
+      // std::cout << eventCounter << "," << IsEven(eventCounter) << std::endl;
       eventCounter++;
     }
     lineCounter++;

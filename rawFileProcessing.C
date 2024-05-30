@@ -52,6 +52,7 @@ void rawFileProcessing () {
   ofstream lineNumbering ("lineNumbering.txt");
   ofstream vzeroValue    ("vzeroValue.txt");
   ofstream vzero_w_Line  ("vzero_w_Line.txt");
+  ofstream hitsOfEvents  ("hitsOfEvents.txt");
   if (!myfile.is_open()) {
     std::cout << "Unable to open myfile" << endl;
 	  system("read -n 1 -s -p \"Press any key to continue...\" echo");
@@ -74,6 +75,7 @@ void rawFileProcessing () {
     Phi_w_Info << Right << std::endl;
     if (IsInt(Left) && IsInt(Right) && Right >= 0) {
       allInfo << lineCounter << "," << eventCounter/2 << "," << Left << "," << Right << std::endl;
+      hitsOfEvents << eventCounter/2 << "," << Left << std::endl;
       lineNumbering << lineCounter << std::endl;
       if (IsEven(eventCounter)) {
         vzero0 = Right;

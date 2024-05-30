@@ -68,16 +68,22 @@ void rawFileProcessing () {
   double LabelOfLines;
   double Left, Right, vzero0 = 0, vzero1 = 0;
 
-  while(getline(myfile, temp)) {
-    istringstream iss(temp);  iss >> Left >> Right;
-    
+  while(getline(myfile, temp)) {                    // Read in one line;
+    istringstream iss(temp);  iss >> Left >> Right; // Each line contains two values;
+    Eta_w_Info << Left  << std::endl;
+    Phi_w_Info << Right << std::endl;
     if (IsInt(Left) && IsInt(Right) && Right >= 0) {
       allInfo << lineCounter << "," << eventCounter/2 << "," << Left << "," << Right << std::endl;
+      lineNumbering << lineCounter << std::endl;
       if (IsEven(eventCounter)) {
         vzero0 = Right;
+        vzeroValue << vzero0 << std::endl;
+        vzero_w_Line << lineCounter << "," << vzero0 << std::endl;
       } else {
         vzero1 = Right;
-        if (vzero0 != vzero1 ) {
+        vzeroValue << vzero1 << std::endl;
+        vzero_w_Line << lineCounter << "," << vzero1 << std::endl;
+        if (vzero0 != vzero1) {
           std::cout << lineCounter << "," << eventCounter << "," << vzero0 << "," << vzero1 << std::endl;
           exit(1);
         }

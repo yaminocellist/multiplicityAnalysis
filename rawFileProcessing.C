@@ -68,6 +68,7 @@ void rawFileProcessing () {
   double NumOfLayer = 0;
   double LabelOfLines;
   double Left, Right, vzero0 = 0, vzero1 = 0;
+  int hit0 = 0, hit1 = 0;
 
   while(getline(myfile, temp)) {                    // Read in one line;
     istringstream iss(temp);  iss >> Left >> Right; // Each line contains two values;
@@ -78,10 +79,12 @@ void rawFileProcessing () {
       hitsOfEvents << eventCounter/2 << "," << Left << std::endl;
       lineNumbering << lineCounter << std::endl;
       if (IsEven(eventCounter)) {
+        hit0   = Left;
         vzero0 = Right;
         vzeroValue << vzero0 << std::endl;
         vzero_w_Line << lineCounter << "," << vzero0 << std::endl;
       } else {
+        hit1   = Left;
         vzero1 = Right;
         vzeroValue << vzero1 << std::endl;
         vzero_w_Line << lineCounter << "," << vzero1 << std::endl;
@@ -95,7 +98,7 @@ void rawFileProcessing () {
     }
     lineCounter++;
   }
-
+  lineNumbering << lineCounter << std::endl;
   // getline(test, temp);
   
   // istringstream iss(temp);

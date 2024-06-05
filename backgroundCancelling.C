@@ -69,7 +69,7 @@ void backgroundCancelling () {
         getline(origin, temp);     // get layer information of layer_0;
         std::istringstream check(temp);
         check >> firstValue >> secondValue;
-        if (firstValue != 0) {
+        // if (firstValue != 0) {
             for (int i = n1; i < n2 - 1; i++) {
                 getline(origin, temp);
                 std::istringstream line(temp);
@@ -81,13 +81,12 @@ void backgroundCancelling () {
                 Eta0.push_back(firstValue); Phi0.push_back(secondValue);
                 entries++;
             }
-        }
+        // }
         
-
         getline(origin, temp);     // get layer information of layer_1;
         std::istringstream check1(temp);
         check1 >> firstValue >> secondValue;
-        if (firstValue != 0) {
+        // if (firstValue != 0) {
             for (int j = n2; j < n3 - 1; j++) {
                 getline(origin, temp);
                 std::istringstream line(temp);
@@ -99,7 +98,7 @@ void backgroundCancelling () {
                 }
                 Eta1.push_back(firstValue); Phi1.push_back(secondValue);
             }
-        }
+        // }
         // std::cout << "Event between line [" << n1 << ", " << n2 << "] and [" << n2 <<", " << n3 << "];" << endl;
         
         n1 = n3;

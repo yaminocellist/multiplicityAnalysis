@@ -89,14 +89,15 @@ void backgroundCancelling2 () {
     double events = 0;
     double entries = 0;
     double delphi, deleta, absdphi;
-    
+    std::vector<double> Eta0, Eta1, Phi0, Phi1;
+
     int maxim = 1000000;
     while (n1 <= maxim) {    // 32991645 is the 3rd-to-last line number;
-        vector <double> vec1, vec2, vec3, vec4;
-        getline(lineNumbering, temp2);
-        n2 = stoi(temp2);
-        getline(lineNumbering, temp3);
-        n3 = stoi(temp3);
+        // vector <double> vec1, vec2, vec3, vec4;
+        getline(lineNumbering, temp);
+        n2 = stoi(temp);
+        getline(lineNumbering, temp);
+        n3 = stoi(temp);
 
         getline(etaRaw, temp1);     
         getline(phiRaw, temp2);
@@ -104,8 +105,9 @@ void backgroundCancelling2 () {
         for (int i = n1; i < n2 - 1; i++){      // hits of layer_0;
             getline(etaRaw, temp1);
             getline(phiRaw, temp2);
-            vec1.push_back(stod(temp1));        // storing η of layer_0;
-            vec2.push_back(stod(temp2));        // storing φ of layer_0;
+            Eta0.push_back(stod(temp1));        // storing η of layer_0;
+            Phi0.push_back(stod(temp2));        // storing φ of layer_0;
+            
         }
         
         getline(etaRaw, temp1);
@@ -113,8 +115,8 @@ void backgroundCancelling2 () {
         for (int j = n2; j < n3 - 1; j++){      // hits of layer_1;
             getline(etaRaw, temp1);
             getline(phiRaw, temp2);
-            vec3.push_back(stod(temp1));        // storing η of layer_1;
-            vec4.push_back(stod(temp2));        // storing φ of layer_1;
+            Eta1.push_back(stod(temp1));        // storing η of layer_1;
+            Phi1.push_back(stod(temp2));        // storing φ of layer_1;
         }
         //cout << "Event between line [" << n1 << ", " << n2 << "] and [" << n2 <<", " << n3 << "];" << endl;
         
@@ -123,24 +125,24 @@ void backgroundCancelling2 () {
         //cout << "Currently " << events << " events, " << endl;
         
         for (int k = 0; k < n2-n1-1; k++) {
-          double Eta0, Phi0;
-          Eta0 = vec1[k];
+          double eta0, phi0;
+          eta0 = Eta0[k];
           
           //cout << Eta0 << ' ';
-          Phi0 = vec2[k];
+          phi0 = Phi0[k];
           
           //cout << Phi0 << endl;
           
           for (int l = 0; l < n3-n2-1; l++) {
-            double Eta1, Phi1;
-            Eta1 = vec3[l];
+            double eta1, phi1;
+            eta1 = Eta1[l];
             
             //cout << eta1 << ' ';
-            Phi1 = vec4[l];
+            phi1 = Phi1[l];
             
             //cout << phi1 << endl;
-            delphi = abs(vec2[k] - vec4[l]);
-            deleta = vec1[k] - vec3[l];
+            delphi = abs(phi0 - phi1);
+            deleta = eta0 - eta1;
             if (delphi < 0.1){
               HSignal -> Fill(deleta);
             }
@@ -154,6 +156,7 @@ void backgroundCancelling2 () {
           
         }
         n1 = n3;
+        Eta0.clear();   Eta1.clear();   Phi0.clear();   Phi1.clear();
     }
     
     // double N1 = HBackground -> GetEntries();

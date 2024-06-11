@@ -27,13 +27,13 @@ void backgroundCancelling2 () {
 		  std::cout << "Unable to open phiRaw" << std::endl;
 		  system("read -n 1 -s -p \"Press any key to continue...\" echo");
 		  exit(1);
- 	}
+ 	  }
 
     if (!etaRaw.is_open()){
 		  std::cout << "Unable to open etaRaw" << std::endl;
 		  system("read -n 1 -s -p \"Press any key to continue...\" echo");
 		  exit(1);
- 	}
+ 	  }
 
     string temp, temp1, temp2, temp3;
     // 'temp' is just a dummy;
@@ -71,12 +71,12 @@ void backgroundCancelling2 () {
 
     TCanvas *c1 = new TCanvas();
     c1 -> Divide(1,2);
-    TH1D *HSignal = new TH1D("HSignal","HSignal; Delta_Eta; Hits",480, binEdges);
+    TH1D *HSignal = new TH1D("HSignal","HSignal; Delta_Eta; Hits", 480, binEdges);
     HSignal -> SetMarkerStyle(20);
     HSignal -> SetMarkerSize(0.5);
     HSignal -> SetLineColor(kRed);
     
-    TH1D *HBackground = new TH1D("HBackground","HBackground;Delta_Eta; Hits",480, binEdges);
+    TH1D *HBackground = new TH1D("HBackground","HBackground;Delta_Eta; Hits", 480, binEdges);
     HBackground -> SetMarkerStyle(21);
     HBackground -> SetMarkerSize(0.5);
     HBackground -> SetLineColor(kBlue);

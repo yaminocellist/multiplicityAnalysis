@@ -5,6 +5,7 @@
 #include <vector>
 #include <unistd.h>
 #include "TH1.h"
+#include "Headers/globalFunctions.h"
 
 using namespace std;
 
@@ -16,7 +17,7 @@ void backgroundCancelling2 () {
     ifstream lineNumbering("lineNumbering.txt");
     ifstream etaRaw       ("Eta_w_Info.txt");
     ifstream phiRaw       ("Phi_w_Info.txt");
-        
+
     if (!lineNumbering.is_open()){
 		  std::cout << "Unable to open lineNumbering" << std::endl;
 		  system("read -n 1 -s -p \"Press any key to continue...\" echo");
@@ -35,18 +36,13 @@ void backgroundCancelling2 () {
 		  exit(1);
  	  }
 
-    string temp, temp1, temp2, temp3;
-    // 'temp' is just a dummy;
-    // 'temp1' stores 'n1';
-    // 'temp2' stores 'n2';
-    // 'temp3' stores 'n3';
-
+    string temp, temp1, temp2;
     for (int i = 1; i <= 1; i++)  getline(lineNumbering, temp);
     int n1 = stoi(temp);
-    for (int j = 1; j < n1; j++) {
-        getline(etaRaw, temp1);
-        getline(phiRaw, temp2);
-    }
+    // for (int j = 1; j < n1; j++) {
+    //     getline(etaRaw, temp1);
+    //     getline(phiRaw, temp2);
+    // }
     int n2, n3;
 
     /*********************************
@@ -71,29 +67,33 @@ void backgroundCancelling2 () {
 
     TCanvas *c1 = new TCanvas();
     c1 -> Divide(1,2);
-    TH1D *HSignal = new TH1D("HSignal","HSignal; Delta_Eta; Hits", 480, binEdges);
+    // TH1D *HSignal = new TH1D("HSignal","HSignal; Delta_Eta; Hits", 480, binEdges);
+    TH1D *HSignal = new TH1D("HSignal","HSignal; Delta_Eta; Hits", 400, -2, 2);
     HSignal -> SetMarkerStyle(20);
     HSignal -> SetMarkerSize(0.5);
     HSignal -> SetLineColor(kRed);
     
-    TH1D *HBackground = new TH1D("HBackground","HBackground;Delta_Eta; Hits", 480, binEdges);
+    // TH1D *HBackground = new TH1D("HBackground","HBackground;Delta_Eta; Hits", 480, binEdges);
+    TH1D *HBackground = new TH1D("HBackground","HBackground;Delta_Eta; Hits", 400, -2, 2);
     HBackground -> SetMarkerStyle(21);
     HBackground -> SetMarkerSize(0.5);
     HBackground -> SetLineColor(kBlue);
 
-    TH1D *HBackground_1 = new TH1D("HBackground_1","HBackground_1;Delta_Eta; Hits", 480, binEdges);
+    // TH1D *HBackground_1 = new TH1D("HBackground_1","HBackground_1;Delta_Eta; Hits", 480, binEdges);
+    TH1D *HBackground_1 = new TH1D("HBackground_1","HBackground_1;Delta_Eta; Hits", 400, -2, 2);
     HBackground_1 -> SetMarkerStyle(21);
     HBackground_1 -> SetMarkerSize(0.5);
     HBackground_1 -> SetLineColor(kBlue);
+
+    TH2D *h2D           = new TH2D("2D", "2D histogram", 200, -2, 2, 200, -2*M_PI, 2*M_PI);
     
     double events = 0;
     double entries = 0;
     double delphi, deleta, absdphi;
     std::vector<double> Eta0, Eta1, Phi0, Phi1;
 
-    int maxim = 1000000;
+    int maxim = 10000;
     while (n1 <= maxim) {    // 32991645 is the 3rd-to-last line number;
-        // vector <double> vec1, vec2, vec3, vec4;
         getline(lineNumbering, temp);
         n2 = stoi(temp);
         getline(lineNumbering, temp);
@@ -101,13 +101,15 @@ void backgroundCancelling2 () {
 
         getline(etaRaw, temp1);     
         getline(phiRaw, temp2);
-        
+        if (!IsInt(std::stod(temp1)) || !IsInt(std::stod(temp2))) {
+          std::cout << "Error at Event among " << n1 << ", " << n2 << ", and " << n3 << std::endl;
+          exit(1);
+        }
         for (int i = n1; i < n2 - 1; i++){      // hits of layer_0;
             getline(etaRaw, temp1);
             getline(phiRaw, temp2);
             Eta0.push_back(stod(temp1));        // storing η of layer_0;
             Phi0.push_back(stod(temp2));        // storing φ of layer_0;
-            
         }
         
         getline(etaRaw, temp1);
@@ -120,47 +122,25 @@ void backgroundCancelling2 () {
         }
         //cout << "Event between line [" << n1 << ", " << n2 << "] and [" << n2 <<", " << n3 << "];" << endl;
         
-        
         events++;
         //cout << "Currently " << events << " events, " << endl;
         
         for (int k = 0; k < n2-n1-1; k++) {
-          double eta0, phi0;
-          eta0 = Eta0[k];
-          
-          //cout << Eta0 << ' ';
-          phi0 = Phi0[k];
-          
-          //cout << Phi0 << endl;
-          
           for (int l = 0; l < n3-n2-1; l++) {
-            double eta1, phi1;
-            eta1 = Eta1[l];
-            
-            //cout << eta1 << ' ';
-            phi1 = Phi1[l];
-            
-            //cout << phi1 << endl;
-            delphi = abs(phi0 - phi1);
-            deleta = eta0 - eta1;
-            if (delphi < 0.1){
+            delphi = Phi0[k] - Phi1[l];
+            deleta = Eta0[k] - Eta1[l];
+            // h2D -> Fill(deleta, delphi);
+            if (std::abs(delphi) < 0.1){
               HSignal -> Fill(deleta);
             }
-            else if (delphi < 0.2) {
+            else if (std::abs(delphi) < 0.2) {
               HBackground -> Fill(deleta);
             }
-            /* else if (delphi > 0.1 && delphi < 1) {
-              HBackground -> Fill(deleta);
-            } */
           }
-          
         }
         n1 = n3;
         Eta0.clear();   Eta1.clear();   Phi0.clear();   Phi1.clear();
     }
-    
-    // double N1 = HBackground -> GetEntries();
-    // double N2 = HSignal -> GetEntries();
 
     double N1 = HBackground -> Integral(HBackground->FindFixBin(-2), HBackground->FindFixBin(-0.1), "") + 
                 HBackground -> Integral(HBackground->FindFixBin(0.1), HBackground->FindFixBin(2), "");
@@ -168,6 +148,9 @@ void backgroundCancelling2 () {
                 HSignal -> Integral(HSignal->FindFixBin(0.1), HSignal->FindFixBin(2), "");
     double N  = N2/N1;
     
+    h2D -> Draw("colz");
+    h2D -> GetXaxis() -> SetTitle("dEta");
+    h2D -> GetYaxis() -> SetTitle("dPhi");
     c1 -> cd(1);
     HSignal -> Sumw2();
     HSignal -> Draw("HIST SAME");
@@ -232,7 +215,7 @@ void backgroundCancelling2 () {
     	system("tput bel");
     	sleep(1);
   	} */
-    cout << "Ns is " << N2 << ", Nb is " << N1 << endl;
-    cout << "Multiplicity Density is " << Ratio << endl;
-	  cout << "Well done." << endl;
+    // cout << "Ns is " << N2 << ", Nb is " << N1 << endl;
+    // cout << "Multiplicity Density is " << Ratio << endl;
+	  // cout << "Well done." << endl;
 }
